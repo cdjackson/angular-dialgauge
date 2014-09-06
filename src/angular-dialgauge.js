@@ -8,13 +8,15 @@
 angular.module('angular-dialgauge', [
     'ngSanitize'
 ])
-    .directive('ngDialGauge', function ($window, $sce) {
+    .directive('ngDialGauge', function ($window, $sce, $interval) {
         return {
             restrict: 'E', // Use as element
             scope: { // Isolate scope
                 ngModel: '=',
                 scaleMin: '=',
                 scaleMax: '=',
+                rotate: '=',
+                units: '@',
                 borderWidth: '@'
             },
             template: '' +
@@ -71,15 +73,16 @@ angular.module('angular-dialgauge', [
                 var radius = center - $scope.dialWidth;
 
                 // Calculate the scaling factor for the value
-                var valueScale = ($scope.scaleMax - $scope.scaleMin)/ $scope.scaleMax / 100 * $scope.angle / radDeg;
+                var valueScale = ($scope.scaleMax - $scope.scaleMin) / $scope.scaleMax / 100 * $scope.angle / radDeg;
                 console.log("Value scale is", valueScale);
 
-                var path = "";
+                // Keep all the static parts of the path separately cached
+                var staticPath = "";
 
                 // Draw the BORDER
                 if ($scope.borderWidth) {
                     // This is currently a full circle - maybe it should be an arc?
-                    path += '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '"' +
+                    staticPath += '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '"' +
                         'style="stroke:' + $scope.borderColor + ';' +
                         'stroke-width: ' + $scope.borderWidth + ';' +
                         'fill:transparent;"' +
@@ -97,7 +100,7 @@ angular.module('angular-dialgauge', [
 
                 // Draw the minor scale
                 if ($scope.scaleMinorLength !== 0) {
-                    path += '<path d="';
+                    staticPath += '<path d="';
                     var scaleAngle = startAngle;
                     var inner = radius - scaleLength;
                     var outer = inner + $scope.scaleMinorLength;
@@ -107,8 +110,8 @@ angular.module('angular-dialgauge', [
                         var cos = Math.cos(scaleAngle);
                         var sin = Math.sin(scaleAngle);
 
-                        path += ' M' + (center + (cos * inner)) + ' ' + (center + (sin * inner));
-                        path += ' L' + (center + (cos * outer)) + ' ' + (center + (sin * outer));
+                        staticPath += ' M' + (center + (cos * inner)) + ' ' + (center + (sin * inner));
+                        staticPath += ' L' + (center + (cos * outer)) + ' ' + (center + (sin * outer));
 
                         scaleAngle += scaleInc;
                         if (scaleAngle > (Math.PI * 2)) {
@@ -117,15 +120,15 @@ angular.module('angular-dialgauge', [
                     }
                     while (scaleSteps-- > 0);
 
-                    path += '" ';
-                    path += 'stroke="' + $scope.scaleMinorColor + '" ' +
+                    staticPath += '" ';
+                    staticPath += 'stroke="' + $scope.scaleMinorColor + '" ' +
                         'stroke-width="' + $scope.scaleMinorWidth + '" ' +
                         '/>';
                 }
 
                 // Draw the major scale
                 if ($scope.scaleMajorLength !== 0) {
-                    path += '<path d="';
+                    staticPath += '<path d="';
                     var scaleAngle = startAngle;
                     var inner = radius - scaleLength;
                     var outer = inner + $scope.scaleMajorLength;
@@ -135,8 +138,8 @@ angular.module('angular-dialgauge', [
                         var cos = Math.cos(scaleAngle);
                         var sin = Math.sin(scaleAngle);
 
-                        path += ' M' + (center + (cos * inner)) + ' ' + (center + (sin * inner));
-                        path += ' L' + (center + (cos * outer)) + ' ' + (center + (sin * outer));
+                        staticPath += ' M' + (center + (cos * inner)) + ' ' + (center + (sin * inner));
+                        staticPath += ' L' + (center + (cos * outer)) + ' ' + (center + (sin * outer));
 
                         scaleAngle += scaleInc;
                         if (scaleAngle > (Math.PI * 2)) {
@@ -145,8 +148,8 @@ angular.module('angular-dialgauge', [
                     }
                     while (scaleSteps-- > 0);
 
-                    path += '" ';
-                    path += 'stroke="' + $scope.scaleMajorColor + '" ' +
+                    staticPath += '" ';
+                    staticPath += 'stroke="' + $scope.scaleMajorColor + '" ' +
                         'stroke-width="' + $scope.scaleMajorWidth + '" ' +
                         '/>';
                 }
@@ -160,52 +163,52 @@ angular.module('angular-dialgauge', [
                 // Draw the TRACK
                 if ($scope.trackColor) {
                     var arc = getArc(startAngle + 0.0000001, endAngle - 0.0000001);
-                    path += '<path d="M' + arc.sX + ' ' + arc.sY;
-                    path += ' A ' + radius + ' ' + radius + ',0,' + arc.dir + ',1,' + arc.eX + ' ' + arc.eY + '" ';
-                    path += 'stroke="' + $scope.trackColor + '" ' +
+                    staticPath += '<path d="M' + arc.sX + ' ' + arc.sY;
+                    staticPath +=
+                        ' A ' + radius + ' ' + radius + ',0,' + arc.dir + ',1,' + arc.eX + ' ' + arc.eY + '" ';
+                    staticPath += 'stroke="' + $scope.trackColor + '" ' +
                         'stroke-linecap="' + $scope.lineCap + '" ' +
                         'stroke-width="' + $scope.barWidth + '" ' +
                         'fill="transparent"' +
                         '/>';
-
                 }
 
-                // Sanity check the value
-                var value = $scope.ngModel;
-                if (value > $scope.scaleMax) {
-                    value = $scope.scaleMax;
-                }
-                if (value < $scope.scaleMin) {
-                    value = $scope.scaleMin;
+                if(true) {
+                    staticPath += '<text text-anchor="middle" x="' + center + '" y="' + (center + 20) +
+                        '" class="dialgauge-title">Temperature</text>';
                 }
 
-                // Turn value into a percentage of the max angle
-                console.log("Value is", value);
-                value = value * valueScale;
-                console.log("Value angle is", value);
-                var valueAngle = value + startAngle;
-                if (valueAngle > Math.PI * 2) {
-                    valueAngle -= Math.PI * 2;
-                }
-
-                var arc = getArc(startAngle, valueAngle);
-                path += '<path d="M' + arc.sX + ' ' + arc.sY;
-                path += ' A ' + radius + ' ' + radius + ',0,' + arc.dir + ',1,' + arc.eX + ' ' + arc.eY + '" ';
-                path += 'stroke="' + $scope.barColor + '" ' +
-                    'stroke-linecap="' + $scope.lineCap + '" ' +
-                    'stroke-width="' + $scope.barWidth + '" ' +
-                    'fill="transparent"' +
-                    '/>';
-
-                path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
-                    '<tspan class="dialgauge-value">12.3</tspan>' +
-                    '<tspan class="dialgauge-unit">DegC</tspan>' +
-                    '<tspan class="dialgauge-title" x="' + center + '" dy="20">Temperature</tspan>' +
-                    '</text>';
-
- //               console.log(path);
-                $scope.gauge = $sce.trustAsHtml("<svg>" + path + "</svg>");
-
+                var valWindow = ($scope.scaleMax - $scope.scaleMin) / 2000;
+                var currentValue = null;
+                var intermediateValue = null;
+                var timer = null;
+                $scope.$watch("ngModel", function (value) {
+                    if (currentValue == null) {
+                        currentValue = value;
+                        updateBar(value);
+                        return;
+                    }
+                    if (timer != null) {
+                        $interval.cancel(timer);
+                        timer = null;
+                    }
+                    intermediateValue = currentValue;
+                    currentValue = value;
+                    console.log("Value is updated to", value);
+                    timer = $interval(function () {
+                            var step = (currentValue - intermediateValue) / 10;
+                            if(Math.abs(step) < valWindow) {
+                                intermediateValue = currentValue;
+                                $interval.cancel(timer);
+                            }
+                            else {
+                                intermediateValue += step;
+                            }
+                            console.log("Updating to", intermediateValue, "Destination", currentValue);
+                            updateBar(intermediateValue);
+                        },
+                        20, 100);
+                });
 
                 var w = angular.element($window);
                 w.bind('resize', function () {
@@ -215,6 +218,48 @@ angular.module('angular-dialgauge', [
                     //                    'h': w.height()
                     $scope.$apply();
                 });
+
+
+//                updateBar($scope.ngModel);
+
+                // Sanity check the value
+                function updateBar(newValue) {
+                    var value = newValue;
+                    if (value > $scope.scaleMax) {
+                        value = $scope.scaleMax;
+                    }
+                    if (value < $scope.scaleMin) {
+                        value = $scope.scaleMin;
+                    }
+
+                    // Turn value into a percentage of the max angle
+                    console.log("Value is", value);
+                    value = value * valueScale;
+                    console.log("Value angle is", value);
+                    var valueAngle = value + startAngle;
+                    if (valueAngle > Math.PI * 2) {
+                        valueAngle -= Math.PI * 2;
+                    }
+
+                    var arc = getArc(startAngle, valueAngle);
+
+                    var path = "";
+                    path += '<path d="M' + arc.sX + ' ' + arc.sY;
+                    path += ' A ' + radius + ' ' + radius + ',0,' + arc.dir + ',1,' + arc.eX + ' ' + arc.eY + '" ';
+                    path += 'stroke="' + $scope.barColor + '" ' +
+                        'stroke-linecap="' + $scope.lineCap + '" ' +
+                        'stroke-width="' + $scope.barWidth + '" ' +
+                        'fill="transparent"' +
+                        '/>';
+
+                    path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
+                        '<tspan class="dialgauge-value">' + Math.floor(newValue) + '</tspan>' +
+                        '<tspan dx="3" class="dialgauge-unit">' + $scope.units + '</tspan>' +
+                        '</text>';
+
+                    //               console.log(path);
+                    $scope.gauge = $sce.trustAsHtml("<svg>" + staticPath + path + "</svg>");
+                }
 
                 // Calculate the start and end positions
                 // Also calculate the large-arc flag.
@@ -232,7 +277,7 @@ angular.module('angular-dialgauge', [
                         console.log("Case 3");
                         dir = 1;
                     }
-                    else if(endAngle - startAngle < Math.PI) {
+                    else if (endAngle - startAngle < Math.PI) {
                         console.log("Case 1");
                         dir = 0;
                     }
