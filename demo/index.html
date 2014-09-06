@@ -1,0 +1,45 @@
+<!doctype html>
+<html ng-app="demoApp">
+<head>
+    <title>dygraphs demo</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-sanitize.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
+
+    <script src="../src/angular-dialgauge.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="demo.css"/>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css">
+</head>
+<body ng-controller="DemoCtrl">
+<div class="container">
+    <div class="row">
+        <div class="col-md-4">
+            <h3>dialgauge - AngularJS Directive</h3>
+
+            <p>This directive adds functionality to the dygraphs library by adding an interactive legend below the graph,
+                and a popover tooltip that follows the mouse.</p>
+            <p>A LESS style sheet is provided that allows use with Bootstrap themes.</p>
+            <p>This is inspired by the easy-pie-chart plugin for jQuery but is written to use SVG to make styling easier and more flexible.</p>
+        </div>
+        <div class="col-md-8">
+            <ng-dial-gauge style="height:450px;" >
+            </ng-dial-gauge>
+        </div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    var demoApp = angular.module('demoApp', [
+        "angular-dialgauge"
+    ]);
+
+    demoApp.controller('DemoCtrl', function ($scope) {
+
+
+
+    });
+</script>
+</body>
+</html>
