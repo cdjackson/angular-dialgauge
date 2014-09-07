@@ -14,6 +14,7 @@
     <style>
         .dg {
             display: inline-block;
+            width: 140px;
         }
 
         .dialgauge-value {
@@ -47,75 +48,81 @@
                 and more flexible.</p>
         </div>
         <div class="col-md-8">
+            <div class="row">
+                <div class="dg">
+                    <ng-dial-gauge id="gauge1"
+                                   scale-min="0"
+                                   scale-max="50"
+                                   border-width="0"
+                                   ng-model="gauge1"
+                                   bar-color="pink"
+                                   bar-width="6"
+                                   units="%"
+                                   angle="135"
+                                   rotate="180"
+                                   line-cap="round"
+                                   style="stroke:blue;font-weight:100;">
+                    </ng-dial-gauge>
+                </div>
 
-            <div class="dg">
-                <ng-dial-gauge id="gauge1"
-                               scale-min="0"
-                               scale-max="50"
-                               border-width="0"
-                               ng-model="gauge1"
-                               bar-color="pink"
-                               bar-width="6"
-                               units="%"
-                               angle="135"
-                               rotate="180"
-                               line-cap="round"
-                               style="stroke:blue;font-weight:100;height:450px;">
-                </ng-dial-gauge>
+                <div class="dg">
+                    <ng-dial-gauge id="gauge2"
+                                   scale-min="0"
+                                   scale-max="100"
+                                   border-color="grey"
+                                   border-width="1"
+                                   ng-model="gauge2"
+                                   bar-color="green"
+                                   bar-width="3"
+                                   units="DegC"
+                                   title="Temperature"
+                                   angle="270"
+                                   rotate="180"
+                                   line-cap="round"
+                                   style="stroke:blue;font-weight:100;height:450px;">
+                    </ng-dial-gauge>
+                </div>
+
+                <div class="dg">
+                    <ng-dial-gauge id="gauge3"
+                                   scale-min="0"
+                                   scale-max="50"
+                                   border-width="0"
+                                   ng-model="gauge3"
+                                   track-color="none"
+                                   bar-color="red"
+                                   bar-width="3"
+                                   units="DegC"
+                                   angle="135"
+                                   rotate="0"
+                                   line-cap="round"
+                                   style="stroke:blue;font-weight:100;height:450px;">
+                    </ng-dial-gauge>
+                </div>
+
+                <div class="dg">
+                    <ng-dial-gauge id="gauge4"
+                                   scale-min="0"
+                                   scale-max="100"
+                                   border-width="0"
+                                   ng-model="gauge4"
+                                   bar-color="green"
+                                   bar-width="10"
+                                   angle="225"
+                                   bar-angle="5"
+                                   rotate="0"
+                                   units="%"
+                                   scale-minor-length="0"
+                                   scale-major-length="0"
+                                   line-cap="butt"
+                                   style="stroke:blue;font-weight:100;width:150px;">
+                    </ng-dial-gauge>
+                </div>
             </div>
 
-            <div class="dg">
-                <ng-dial-gauge id="gauge2"
-                               scale-min="0"
-                               scale-max="100"
-                               border-width="1"
-                               ng-model="gauge2"
-                               bar-color="green"
-                               bar-width="3"
-                               units="DegC"
-                               angle="270"
-                               rotate="180"
-                               line-cap="round"
-                               style="stroke:blue;font-weight:100;height:450px;">
-                </ng-dial-gauge>
+            <div class="row">
+                <a class="btn btn-default" ng-click="update()">Update Gauge Values</a>
             </div>
-
-            <div class="dg">
-                <ng-dial-gauge id="gauge3"
-                               scale-min="0"
-                               scale-max="50"
-                               border-width="0"
-                               ng-model="gauge3"
-                               track-color="none"
-                               bar-color="red"
-                               bar-width="3"
-                               units="DegC"
-                               angle="135"
-                               rotate="0"
-                               line-cap="round"
-                               style="stroke:blue;font-weight:100;height:450px;">
-                </ng-dial-gauge>
-            </div>
-
-            <div class="dg">
-                <ng-dial-gauge id="gauge4"
-                               scale-min="0"
-                               scale-max="100"
-                               border-width="0"
-                               ng-model="gauge4"
-                               bar-color="green"
-                               bar-width="10"
-                               angle="225"
-                               bar-angle="5"
-                               rotate="0"
-                               scale-minor-length="0"
-                               scale-major-length="0"
-                               line-cap="butt"
-                               style="stroke:blue;font-weight:100;height:450px;">
-                </ng-dial-gauge>
-            </div>
-
-            <a class="btn btn-default" ng-click="update()">Update Gauge Values</a>
         </div>
     </div>
 </div>
