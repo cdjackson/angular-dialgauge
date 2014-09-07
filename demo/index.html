@@ -56,7 +56,7 @@
                                ng-model="gauge1"
                                bar-color="pink"
                                bar-width="6"
-                               units="DegC"
+                               units="%"
                                angle="135"
                                rotate="180"
                                line-cap="round"
@@ -86,12 +86,32 @@
                                scale-max="50"
                                border-width="0"
                                ng-model="gauge3"
+                               track-color="none"
                                bar-color="red"
                                bar-width="3"
                                units="DegC"
                                angle="135"
                                rotate="0"
                                line-cap="round"
+                               style="stroke:blue;font-weight:100;height:450px;">
+                </ng-dial-gauge>
+            </div>
+
+            <div class="dg">
+                <ng-dial-gauge id="gauge4"
+                               scale-min="0"
+                               scale-max="100"
+                               border-width="0"
+                               ng-model="gauge4"
+                               bar-color="green"
+                               bar-width="10"
+                               units="DegC"
+                               angle="135"
+                               bar-angle="5"
+                               rotate="0"
+                               scale-minor-length="0"
+                               scale-major-length="0"
+                               line-cap="butt"
                                style="stroke:blue;font-weight:100;height:450px;">
                 </ng-dial-gauge>
             </div>
@@ -112,6 +132,7 @@
             $scope.gauge1 = Math.floor(Math.random() * 100);
             $scope.gauge2 = Math.floor(Math.random() * 100);
             $scope.gauge3 = Math.floor(Math.random() * 50);
+            $scope.gauge4 = Math.floor(Math.random() * 100);
         }
 
 
