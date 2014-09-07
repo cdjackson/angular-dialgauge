@@ -313,10 +313,13 @@ angular.module('angular-dialgauge', [
                 function updateBar(newValue) {
                     // Sanity check the value
                     var value = newValue;
-                    if (value > $scope.scaleMax) {
+                    if(newValue === undefined) {
+                        value = $scope.scaleMin;
+                    }
+                    else if (value > $scope.scaleMax) {
                         value = $scope.scaleMax;
                     }
-                    if (value < $scope.scaleMin) {
+                    else if (value < $scope.scaleMin) {
                         value = $scope.scaleMin;
                     }
 
@@ -365,8 +368,10 @@ angular.module('angular-dialgauge', [
                         'fill="transparent"' +
                         '/>';
 
-                    path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
-                        '<tspan class="dialgauge-value">' + Math.floor(newValue) + '</tspan>';
+                    if(newValue !== undefined) {
+                        path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
+                            '<tspan class="dialgauge-value">' + Math.floor(newValue) + '</tspan>';
+                    }
 
                     if ($scope.units != undefined) {
                         path += '<tspan dx="3" class="dialgauge-unit">' + $scope.units + '</tspan>';
