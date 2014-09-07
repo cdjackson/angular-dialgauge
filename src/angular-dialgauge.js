@@ -200,7 +200,7 @@ angular.module('angular-dialgauge', [
                     // Calculate the scaling factor for the value
                     // This accounts for the actual scale from the user, the rotation angle,
                     // and the conversion to radians
-                    valueScale = ($scope.scaleMax - $scope.scaleMin) / $scope.scaleMax / 100 * $scope.angle /
+                    valueScale = $scope.scaleMax / ($scope.scaleMax - $scope.scaleMin) * $scope.angle /
                         radDeg;
 
                     // Keep all the static parts of the path separately cached
@@ -321,6 +321,7 @@ angular.module('angular-dialgauge', [
                     }
 
                     // Turn value into a percentage of the max angle
+                    value = (value - $scope.scaleMin) / $scope.scaleMax;
                     value = value * valueScale;
 
                     // Create the bar.

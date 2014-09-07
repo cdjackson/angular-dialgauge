@@ -51,8 +51,8 @@
             <div class="row">
                 <div class="dg">
                     <ng-dial-gauge id="gauge1"
-                                   scale-min="0"
-                                   scale-max="50"
+                                   scale-min="25"
+                                   scale-max="75"
                                    border-width="0"
                                    ng-model="gauge1"
                                    bar-color="pink"
@@ -74,7 +74,6 @@
                                    ng-model="gauge2"
                                    bar-color="green"
                                    bar-width="3"
-                                   units="DegC"
                                    title="Temperature"
                                    angle="270"
                                    rotate="180"
@@ -111,7 +110,6 @@
                                    angle="225"
                                    bar-angle="5"
                                    rotate="0"
-                                   units="%"
                                    scale-minor-length="0"
                                    scale-major-length="0"
                                    line-cap="butt"
@@ -135,7 +133,7 @@
 
     demoApp.controller('DemoCtrl', function ($scope) {
         $scope.update = function () {
-            $scope.gauge1 = Math.floor(Math.random() * 100);
+            $scope.gauge1 = Math.floor(Math.random() * 50) + 25;
             $scope.gauge2 = Math.floor(Math.random() * 100);
             $scope.gauge3 = Math.floor(Math.random() * 50);
             $scope.gauge4 = Math.floor(Math.random() * 100);
