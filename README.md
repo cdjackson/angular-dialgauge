@@ -6,6 +6,7 @@ AngularJS directive for a dial gauge
 The following options are possible -:
 
 Option              | Description
+--------------------| -----------
 rotate              | Sets the rotation of the gauge
 angle               | Sets the total angle of the active part of the gauge
 scaleMin            | Sets the minimum value
