@@ -39,3 +39,19 @@ Class               | Description
 dialgauge-title     | Styles the title caption
 dialgauge-value     | Styles the value (number)
 dialgauge-unit      | Styles the unit
+
+
+Installation
+============
+Use bower
+```
+bower install angular-dialgauge --save
+```
+
+Add the ```angular-dialgauge.js``` file to your application and ensure you register the directive by adding 
+```ngDialGauge``` to your app.
+
+
+License
+=======
+Licensed under MIT license.
