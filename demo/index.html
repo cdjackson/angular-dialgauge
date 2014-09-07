@@ -1,7 +1,7 @@
 <!doctype html>
 <html ng-app="demoApp">
 <head>
-    <title>dygraphs demo</title>
+    <title>Angular dialgauge demo</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular.min.js"></script>
     <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.0/angular-sanitize.min.js"></script>
@@ -53,7 +53,7 @@
                     <ng-dial-gauge id="gauge1"
                                    scale-min="25"
                                    scale-max="75"
-                                   border-width="0"
+                                   border-width="1"
                                    ng-model="gauge1"
                                    bar-color="pink"
                                    bar-width="6"
@@ -116,6 +116,7 @@
                                    style="stroke:blue;font-weight:100;width:150px;">
                     </ng-dial-gauge>
                 </div>
+
             </div>
 
             <div class="row">
