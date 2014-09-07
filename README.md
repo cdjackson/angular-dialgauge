@@ -1,7 +1,8 @@
 angular-dialgauge
 =================
 
-AngularJS directive for a dial gauge
+AngularJS directive for a dial gauge. This uses SVG and will automatically size to the parent. Therefore the parent should
+have a size.
 
 The following options are possible -:
 
@@ -33,3 +34,8 @@ units               | Sets the text to be used for the units
 
 
 The following CSS classes can be used for the text -:
+Class               | Description
+--------------------| -----------
+dialgauge-title     | Styles the title caption
+dialgauge-value     | Styles the value (number)
+dialgauge-unit      | Styles the unit
