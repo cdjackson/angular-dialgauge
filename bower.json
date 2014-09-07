@@ -6,6 +6,7 @@
     "Chris Jackson <chris@cd-jackson.com>"
   ],
   "description": "Animated dial gauge for AngularJS",
+  "main": "src/angular-dialgauge.js",
   "keywords": [
     "AngularJS",
     "Javascript",
