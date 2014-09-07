@@ -25,6 +25,7 @@ angular.module('angular-dialgauge', [
                 trackColor: '@',
                 barColor: '@',
                 barWidth: '@',
+                barAngle: '@',
                 scaleOffset: '@',
                 lineCap: '@',
                 scaleMinorColor: '@',
@@ -43,6 +44,9 @@ angular.module('angular-dialgauge', [
                 var pathRadius = 0;
                 var valueScale = 0;
                 var startAngle = 0;
+                var endAngle = 0;
+                var barAngle = 0;
+                var radDeg = 180 / Math.PI;
 
 
                 /*                var x = $element.height();
@@ -61,6 +65,7 @@ angular.module('angular-dialgauge', [
                     'lineCap',
                     'barWidth',
                     'barColor',
+                    'barAngle',
                     'trackColor',
                     'scaleOffset',
                     'scaleMinorSteps',
@@ -90,6 +95,7 @@ angular.module('angular-dialgauge', [
                     $scope.scaleMinorLength = $scope.scaleMinorLength || 3;
                     $scope.scaleMinorWidth = $scope.scaleMinorWidth || 0.5;
                     $scope.scaleMinorColor = $scope.scaleMinorColor || "#606060";
+                    $scope.barAngle = $scope.barAngle || 0;
                     $scope.barWidth = $scope.barWidth || 3;
                     $scope.barColor = $scope.barColor || "#ff0000";
                     $scope.scaleOffset = $scope.scaleOffset || 3;
@@ -100,6 +106,8 @@ angular.module('angular-dialgauge', [
                     $scope.scaleMin = $scope.scaleMin || 0;
                     $scope.scaleMax = $scope.scaleMax || 100;
 
+                    barAngle = $scope.barAngle / radDeg / 2;
+
                     staticPath = createStaticPath();
                 }, true);
 
@@ -109,8 +117,6 @@ angular.module('angular-dialgauge', [
 //                console.log("Start", $scope.barWidth, $scope.barColor);
 
                 function createStaticPath() {
-                    var radDeg = 180 / Math.PI;
-
                     // Sanitise the rotation
                     // Rotation should start at the top, so we need to subtract 90 degrees
                     var rotate = $scope.rotate - 90;
@@ -121,7 +127,10 @@ angular.module('angular-dialgauge', [
 
                     // Calculate start and end angles - in radians
                     startAngle = rotate / radDeg;
-                    var endAngle = startAngle + $scope.angle / radDeg;
+                    if (startAngle > Math.PI * 2) {
+                        startAngle -= Math.PI * 2;
+                    }
+                    endAngle = startAngle + $scope.angle / radDeg;
                     if (endAngle > (Math.PI * 2)) {
                         endAngle -= (Math.PI * 2);
                     }
@@ -153,12 +162,12 @@ angular.module('angular-dialgauge', [
 
                     // Calculate the maximum scale size
                     var scaleLength = 0;
-                    if ($scope.scaleMinorLength !== 0 || $scope.scaleMajorLength !== 0) {
+                    if ($scope.scaleMinorLength != 0 || $scope.scaleMajorLength != 0) {
                         scaleLength = Math.max($scope.scaleMajorLength, $scope.scaleMinorLength);
                     }
 
                     // Draw the minor scale
-                    if ($scope.scaleMinorLength !== 0) {
+                    if ($scope.scaleMinorLength != 0) {
                         staticPath += '<path d="';
                         var scaleAngle = startAngle;
                         var inner = radius - scaleLength;
@@ -186,7 +195,7 @@ angular.module('angular-dialgauge', [
                     }
 
                     // Draw the major scale
-                    if ($scope.scaleMajorLength !== 0) {
+                    if ($scope.scaleMajorLength != 0) {
                         staticPath += '<path d="';
                         var scaleAngle = startAngle;
                         var inner = radius - scaleLength;
@@ -221,7 +230,7 @@ angular.module('angular-dialgauge', [
 
                     // Draw the TRACK
                     pathRadius = radius;
-                    if ($scope.trackColor) {
+                    if ($scope.trackColor != "none") {
 //                        console.log("track", $scope.barWidth, $scope.barColor);
                         var arc = getArc(radius, startAngle + 0.0000001, endAngle - 0.0000001);
                         staticPath += '<path d="M' + arc.sX + ' ' + arc.sY;
@@ -304,7 +313,27 @@ angular.module('angular-dialgauge', [
                         valueAngle -= Math.PI * 2;
                     }
 
-                    var arc = getArc(pathRadius, startAngle, valueAngle);
+                    var start,end;
+                    if(barAngle !== 0) {
+                        start = valueAngle - barAngle;
+                        if(start < 0) {
+                            start += Math.PI * 2;
+                        }
+                        if(start < startAngle) {
+                            start = startAngle;
+                        }
+                        end = start + (barAngle * 2);
+
+                        if(end > endAngle) {
+                            end = endAngle;
+                            start = endAngle - (barAngle * 2);
+                        }
+                    }
+                    else {
+                        start = startAngle;
+                        end = valueAngle;
+                    }
+                    var arc = getArc(pathRadius, start, end);
 //                    console.log("xxxx", $scope.barWidth, $scope.barColor);
 
                     var path = "";
