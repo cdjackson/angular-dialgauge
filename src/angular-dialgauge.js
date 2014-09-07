@@ -59,36 +59,18 @@ angular.module('angular-dialgauge', [
                 var width;
 
 
-                var www = $element[0].getBoundingClientRect();
-                console.log("Size is", www);
-                var x = $element.height();
-                var e = $element.parent();
-                width = e.width();
-                height = e.height();
-                var center = Math.min(width, height) / 2;
+                var rect = $element[0].getBoundingClientRect();
+                var center = Math.floor(Math.min(rect.width, rect.height) / 2);
                 height = width = center * 2;
 
-
                 $scope.getElementDimensions = function () {
-//                    var x = { 'h': $element.height(), 'w': $element.width() };
                     var rect = $element[0].getBoundingClientRect();
-                    console.log("Size is", rect.width, rect.height);
-                    var ppp = $element.parent();//.getBoundingClientRect();
-//                    console.log("Size is",rect.width, rect.height);
-//                    console.log("Dims", x);
                     return { 'h': rect.height, 'w': rect.width };
                 };
 
                 $scope.$watch($scope.getElementDimensions, function (newValue, oldValue) {
-                    console.log("Dims changed", newValue, oldValue);
-                    //var c = Math.min(newValue.h, newValue.w) / 2;
-                    var e = $element.parent();
-//                     width = e.width();
-                    //                   height = e.height();
-                    var c = Math.min(e.width(), e.height()) / 2;
+                    var c = Math.floor(Math.min(newValue.w, newValue.h) / 2);
 
-                    console.log("Center is now", c, "versus", center);
-                    // center =
                     // Update the static path for the gauge if it's changed
                     if (c != center) {
                         center = c;
@@ -98,10 +80,6 @@ angular.module('angular-dialgauge', [
                     }
                 }, true);
 
-                /*            $element.bind('resize', function () {
-                 console.log("RESIZE");
-                 $scope.$apply();
-                 });*/
 
                 // Add a watch on all configuration variables.
                 // If anything changes, update the static path
@@ -130,7 +108,6 @@ angular.module('angular-dialgauge', [
                     'borderColor',
                     'units'
                 ], function () {
-                    console.log("Updated values", $scope);
                     $scope.rotate = $scope.rotate || 180;
                     $scope.angle = $scope.angle || 250;
                     $scope.lineCap = $scope.lineCap || "round";
@@ -196,6 +173,12 @@ angular.module('angular-dialgauge', [
 
                 // Create the static part of the gauge
                 function createStaticPath() {
+                    // Sanity check
+                    if(center <= 0) {
+                        return;
+                    }
+                    var radius = center - $scope.dialWidth;
+
                     // Sanitise the rotation
                     // Rotation should start at the top, so we need to subtract 90 degrees
                     var rotate = $scope.rotate - 90;
@@ -213,7 +196,6 @@ angular.module('angular-dialgauge', [
                     if (endAngle > (Math.PI * 2)) {
                         endAngle -= (Math.PI * 2);
                     }
-                    var radius = center - $scope.dialWidth;
 
                     // Calculate the scaling factor for the value
                     // This accounts for the actual scale from the user, the rotation angle,
