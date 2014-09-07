@@ -36,7 +36,8 @@ angular.module('angular-dialgauge', [
                 scaleMajorColor: '@',
                 scaleMajorWidth: '@',
                 scaleMajorLength: '@',
-                scaleMajorSteps: '@'
+                scaleMajorSteps: '@',
+                options: '=?'
             },
             template: '' +
                 '<div style="width:100%" ng-bind-html="gauge"</div>',
@@ -62,11 +63,11 @@ angular.module('angular-dialgauge', [
                     scaleMin: 0,
                     scaleMax: 100,
                     rotate: 180,
-                    angle: 0,
+                    angle: 225,
                     units: "",
                     title: "",
                     dialWidth: 3,
-                    borderWidth: 3,
+                    borderWidth: 1,
                     borderOffset: 2,
                     borderColor: "#a0a0a0",
                     trackColor: '#c0c0c0',
@@ -85,10 +86,9 @@ angular.module('angular-dialgauge', [
                     scaleMajorSteps: 9
                 };
 
+                // Set default configuration
                 var cfg = {};
-
-                // Set defaults
-                parseParameters();
+                parseParameters({});
 
 
                 var rect = $element[0].getBoundingClientRect();
@@ -138,11 +138,15 @@ angular.module('angular-dialgauge', [
                     'borderWidth',
                     'borderOffset',
                     'borderColor',
-                    'units'
-                ], function (a, b, c, d, e, f, g, h, i, j, k, l, m) {
-                    console.log("Update", $scope);
-
-                    parseParameters();
+                    'units',
+                    'options'
+                ], function () {
+                    if($scope.options !== undefined) {
+                        parseParameters($scope.options);
+                    }
+                    else {
+                        parseParameters($scope);
+                    }
 
                     // Update the static path for the gauge
                     staticPath = createStaticPath();
@@ -418,12 +422,12 @@ angular.module('angular-dialgauge', [
                     return {sX: startX, sY: startY, eX: endX, eY: endY, dir: dir};
                 }
 
-                function parseParameters() {
+                function parseParameters(cfgObject) {
                     for (var key in defaults) {
                         console.log("Checking ", key);
 
-                        if ($scope[key] !== undefined) {
-                            cfg[key] = $scope[key];
+                        if (cfgObject[key] !== undefined) {
+                            cfg[key] = cfgObject[key];
                         }
                         else if (cfg[key] === undefined) {
                             cfg[key] = defaults[key];
