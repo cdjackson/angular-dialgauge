@@ -46,6 +46,7 @@ angular.module('angular-dialgauge', [
                 var startAngle = 0;
                 var endAngle = 0;
                 var barAngle = 0;
+                var fullAngle = 0;
                 var radDeg = 180 / Math.PI;
 
 
@@ -107,11 +108,10 @@ angular.module('angular-dialgauge', [
                     $scope.scaleMax = $scope.scaleMax || 100;
 
                     barAngle = $scope.barAngle / radDeg / 2;
+                    fullAngle = $scope.angle / radDeg;
 
                     staticPath = createStaticPath();
                 }, true);
-
-
 
 
 //                console.log("Start", $scope.barWidth, $scope.barColor);
@@ -243,9 +243,9 @@ angular.module('angular-dialgauge', [
                             '/>';
                     }
 
-                    if (true) {
+                    if ($scope.title) {
                         staticPath += '<text text-anchor="middle" x="' + center + '" y="' + (center + 20) +
-                            '" class="dialgauge-title">Temperature</text>';
+                            '" class="dialgauge-title">' + $scope.title + '</text>';
                     }
 
                     return staticPath;
@@ -308,33 +308,37 @@ angular.module('angular-dialgauge', [
 
                     // Turn value into a percentage of the max angle
                     value = value * valueScale;
-                    var valueAngle = value + startAngle;
-                    if (valueAngle > Math.PI * 2) {
-                        valueAngle -= Math.PI * 2;
-                    }
 
-                    var start,end;
-                    if(barAngle !== 0) {
-                        start = valueAngle - barAngle;
-                        if(start < 0) {
-                            start += Math.PI * 2;
-                        }
-                        if(start < startAngle) {
-                            start = startAngle;
+                    // Create the bar.
+                    // If we've specified a barAngle, then only a small knob is required
+                    // Otherwise we start from the beginning
+                    var start, end;
+                    if (barAngle !== 0) {
+                        start = value - barAngle;
+                        if (start < 0) {
+                            start = 0;
                         }
                         end = start + (barAngle * 2);
-
-                        if(end > endAngle) {
-                            end = endAngle;
-                            start = endAngle - (barAngle * 2);
+                        if (end > fullAngle) {
+                            end = fullAngle;
+                            start = end - (barAngle * 2);
                         }
+
+                        start = start + startAngle;
+                        if (start > Math.PI * 2) {
+                            start -= Math.PI * 2;
+                        }
+                        end = end + startAngle;
                     }
                     else {
                         start = startAngle;
-                        end = valueAngle;
+                        end = value + startAngle;
                     }
+                    if (end > Math.PI * 2) {
+                        end -= Math.PI * 2;
+                    }
+
                     var arc = getArc(pathRadius, start, end);
-//                    console.log("xxxx", $scope.barWidth, $scope.barColor);
 
                     var path = "";
                     path += '<path d="M' + arc.sX + ' ' + arc.sY;
@@ -349,7 +353,7 @@ angular.module('angular-dialgauge', [
                     path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
                         '<tspan class="dialgauge-value">' + Math.floor(newValue) + '</tspan>';
 
-                    if($scope.units != undefined) {
+                    if ($scope.units != undefined) {
                         path += '<tspan dx="3" class="dialgauge-unit">' + $scope.units + '</tspan>';
                     }
                     path += '</text>';
