@@ -25,6 +25,7 @@ angular.module('angular-dialgauge', [
                 borderColor: '@',
                 trackColor: '@',
                 barColor: '@',
+                barColorEnd: '@',
                 barWidth: '@',
                 barAngle: '@',
                 scaleOffset: '@',
@@ -72,6 +73,7 @@ angular.module('angular-dialgauge', [
                     borderColor: "#a0a0a0",
                     trackColor: '#c0c0c0',
                     barColor: 'red',
+                    barColorEnd: '',
                     barWidth: 3,
                     barAngle: 0,
                     scaleOffset: 3,
@@ -123,6 +125,7 @@ angular.module('angular-dialgauge', [
                     'lineCap',
                     'barWidth',
                     'barColor',
+                    'barColorEnd',
                     'barAngle',
                     'trackColor',
                     'scaleOffset',
@@ -372,13 +375,29 @@ angular.module('angular-dialgauge', [
                         end -= Math.PI * 2;
                     }
 
+                    var color;
+                    // Calculate the bar color
+                    if(typeof cfg.barColor === "string") {
+                        color = cfg.barColor;
+                    }
+                    else {
+                        var A = color2rgb(cfg.barColor[0]);
+                        var B = color2rgb(cfg.barColor[1]);
+                        var gradient = [];
+                        for (var c = 0; c <3; c++) {
+                            gradient[c] = A[c] + (B[c]-A[c]) * newValue / 100;
+                        }
+
+                        color = rgb2color(gradient);
+                    }
+
                     var arc = getArc(pathRadius, start, end);
 
                     var path = "";
                     path += '<path d="M' + arc.sX + ' ' + arc.sY;
                     path +=
                         ' A ' + pathRadius + ' ' + pathRadius + ',0,' + arc.dir + ',1,' + arc.eX + ' ' + arc.eY + '" ';
-                    path += 'stroke="' + cfg.barColor + '" ' +
+                    path += 'stroke="' + color + '" ' +
                         'stroke-linecap="' + cfg.lineCap + '" ' +
                         'stroke-width="' + cfg.barWidth + '" ' +
                         'fill="transparent"' +
@@ -438,12 +457,42 @@ angular.module('angular-dialgauge', [
                         }
                     }
 
+                    if(cfg.barColorEnd.length !== 0) {
+                        var color = [];
+                        color[0] = cfg.barColor;
+                        color[1] = cfg.barColorEnd;
+                        cfg.barColor = color;
+                    }
+
                     knobAngle = cfg.barAngle / radDeg / 2;
                     fullAngle = cfg.angle / radDeg;
 
                     // Calculate the minimum step used when moving the pointer
                     // If the step is below this value, then we set to the final value
                     valWindow = (cfg.scaleMax - cfg.scaleMin) / 2000
+                }
+
+                // Color #FF00FF format to Array(255,0,255)
+                function color2rgb(color)
+                {
+                    var r = parseInt(color.substr(1, 2), 16);
+                    var g = parseInt(color.substr(3, 2), 16);
+                    var b = parseInt(color.substr(5, 2), 16);
+                    return new Array(r, g, b);
+                }
+
+                // The color of Array (255,0255) format to#FF00FF
+                function rgb2color(rgb)
+                {
+                    var s = "#";
+                    for (var i = 0; i <3; i++)
+                    {
+                        var c = Math.round(rgb[i]).toString(16);
+                        if (c.length == 1)
+                            c = '0' + c;
+                        s += c;
+                    }
+                    return s.toUpperCase();
                 }
             }
         };
