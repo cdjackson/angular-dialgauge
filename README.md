@@ -16,6 +16,7 @@ scaleMax            | Sets the maximum value
 lineCap             | Sets the endcap for the bar line (round, butt, square)
 barWidth            | Sets the width of the bar
 barColor            | Sets the color of the bar
+barColorEnd         | Along with _barColor_ will produce a dynamic color for the bar. Must be used with ```#rrggbb``` color format.
 barAngle            | Sets the angle of the indicator if a knob style is desired
 trackColor          | Sets the color of the track behind the bar
 scaleOffset         |
