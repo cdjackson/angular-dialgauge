@@ -403,18 +403,25 @@ angular.module('angular-dialgauge', [
                         'fill="transparent"' +
                         '/>';
 
+                    path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">';
                     if (newValue !== undefined) {
-                        path += '<text text-anchor="middle" x="' + center + '" y="' + center + '">' +
-                            '<tspan class="dialgauge-value">' + Math.floor(newValue) + '</tspan>';
+                        var dy = "";
+                        if(cfg.title == "") {
+                            dy = "0.3em"
+                        }
+                        path += '<tspan class="dialgauge-value" dy="'+ dy + '">' + Math.floor(newValue) + '</tspan>';
                     }
 
                     if (cfg.units != undefined) {
                         path += '<tspan dx="3" class="dialgauge-unit">' + cfg.units + '</tspan>';
                     }
                     path += '</text>';
-//path="";
+
                     $scope.gauge =
-                        $sce.trustAsHtml('<svg width="' + width + 'pt" height="' + height + 'pt">' + staticPath + path +
+                        $sce.trustAsHtml('<svg width="' + width + 'pt" height="' + height + 'pt" ' +
+//                            'viewBox="0 0 '+ width + ' ' + height + '"' +
+                            '>' +
+                            staticPath + path +
                             '</svg>');
                 }
 
