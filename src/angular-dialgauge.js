@@ -343,8 +343,8 @@ angular.module('angular-dialgauge', [
                     }
 
                     // Turn value into a percentage of the max angle
-                    value = (value - cfg.scaleMin) / cfg.scaleMax;
-                    value = value * valueScale;
+                    var scaledValue = (value - cfg.scaleMin) / cfg.scaleMax;
+                    value = scaledValue * valueScale;
 
                     // Create the bar.
                     // If we've specified a barAngle, then only a small knob is required
@@ -385,7 +385,7 @@ angular.module('angular-dialgauge', [
                         var B = color2rgb(cfg.barColor[1]);
                         var gradient = [];
                         for (var c = 0; c <3; c++) {
-                            gradient[c] = A[c] + (B[c]-A[c]) * newValue / 100;
+                            gradient[c] = A[c] + (B[c]-A[c]) * scaledValue;
                         }
 
                         color = rgb2color(gradient);
