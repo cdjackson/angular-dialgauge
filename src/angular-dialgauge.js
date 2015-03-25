@@ -99,7 +99,7 @@ angular.module('angular-dialgauge', [
 
                 $scope.getElementDimensions = function () {
                     var rect = $element[0].getBoundingClientRect();
-                    return { 'h': rect.height, 'w': rect.width };
+                    return {'h': rect.height, 'w': rect.width};
                 };
 
                 $scope.$watch($scope.getElementDimensions, function (newValue, oldValue) {
@@ -114,6 +114,16 @@ angular.module('angular-dialgauge', [
                     }
                 }, true);
 
+
+                // Add a watch on the options structure.
+                // If anything changes, update the static path
+                $scope.$watch('options', function() {
+                    parseParameters($scope.options);
+
+                    // Update the static path for the gauge
+                    staticPath = createStaticPath();
+                    updateBar(currentValue);
+                });
 
                 // Add a watch on all configuration variables.
                 // If anything changes, update the static path
@@ -141,19 +151,14 @@ angular.module('angular-dialgauge', [
                     'borderWidth',
                     'borderOffset',
                     'borderColor',
-                    'units',
-                    'options'
+                    'units'
                 ], function () {
-                    if($scope.options !== undefined) {
-                        parseParameters($scope.options);
-                    }
-                    else {
-                        parseParameters($scope);
-                    }
+                    parseParameters($scope);
 
                     // Update the static path for the gauge
                     staticPath = createStaticPath();
-                }, true);
+                    updateBar(currentValue);
+                });
 
                 // Set a watch on the model so we can update the dynamic part of the gauge
                 $scope.$watch("ngModel", function (value) {
@@ -377,15 +382,15 @@ angular.module('angular-dialgauge', [
 
                     var color;
                     // Calculate the bar color
-                    if(typeof cfg.barColor === "string") {
+                    if (typeof cfg.barColor === "string") {
                         color = cfg.barColor;
                     }
                     else {
                         var A = color2rgb(cfg.barColor[0]);
                         var B = color2rgb(cfg.barColor[1]);
                         var gradient = [];
-                        for (var c = 0; c <3; c++) {
-                            gradient[c] = A[c] + (B[c]-A[c]) * newValue / 100;
+                        for (var c = 0; c < 3; c++) {
+                            gradient[c] = A[c] + (B[c] - A[c]) * newValue / 100;
                         }
 
                         color = rgb2color(gradient);
@@ -454,13 +459,13 @@ angular.module('angular-dialgauge', [
                         // Convert any numerics into numbers!
                         if (typeof defaults[key] === 'number') {
                             cfg[key] = Number(cfg[key]);
-                            if(isNaN(cfg[key])) {
+                            if (isNaN(cfg[key])) {
                                 cfg[key] = 0;
                             }
                         }
                     }
 
-                    if(cfg.barColorEnd.length !== 0) {
+                    if (cfg.barColorEnd.length !== 0) {
                         var color = [];
                         color[0] = cfg.barColor;
                         color[1] = cfg.barColorEnd;
@@ -476,8 +481,7 @@ angular.module('angular-dialgauge', [
                 }
 
                 // Color #FF00FF format to Array(255,0,255)
-                function color2rgb(color)
-                {
+                function color2rgb(color) {
                     var r = parseInt(color.substr(1, 2), 16);
                     var g = parseInt(color.substr(3, 2), 16);
                     var b = parseInt(color.substr(5, 2), 16);
@@ -485,11 +489,9 @@ angular.module('angular-dialgauge', [
                 }
 
                 // The color of Array (255,0255) format to#FF00FF
-                function rgb2color(rgb)
-                {
+                function rgb2color(rgb) {
                     var s = "#";
-                    for (var i = 0; i <3; i++)
-                    {
+                    for (var i = 0; i < 3; i++) {
                         var c = Math.round(rgb[i]).toString(16);
                         if (c.length == 1)
                             c = '0' + c;
