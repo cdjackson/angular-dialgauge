@@ -231,6 +231,8 @@ angular.module('angular-dialgauge', [
 
                     // Draw the BORDER
                     if (cfg.borderWidth != 0) {
+                        radius -= Math.ceil(cfg.borderWidth / 2);
+
                         // This is currently a full circle - maybe it should be an arc?
                         path += '<circle cx="' + center + '" cy="' + center + '" r="' + radius + '" ' +
                         'style="stroke:' + cfg.borderColor + ';' +
