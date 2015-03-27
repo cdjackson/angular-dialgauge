@@ -151,7 +151,8 @@ angular.module('angular-dialgauge', [
                     'borderWidth',
                     'borderOffset',
                     'borderColor',
-                    'units'
+                    'units',
+                    'title'
                 ], function () {
                     parseParameters($scope);
 
