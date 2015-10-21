@@ -42,7 +42,7 @@ angular.module('angular-dialgauge', [
                 options: '=?'
             },
             template: '' +
-            '<div style="width:100%;height:100%;" ng-bind-html="gauge"</div>',
+            '<div style="width:100%;height:100%;" ng-bind-html="gauge"></div>',
             controller: function ($scope, $element) {
                 // Define variables for this gauge
                 var radDeg = 180 / Math.PI;
