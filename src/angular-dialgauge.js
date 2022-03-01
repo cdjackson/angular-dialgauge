@@ -177,6 +177,13 @@ angular.module('angular-dialgauge', [
 
                 // Set a watch on the model so we can update the dynamic part of the gauge
                 $scope.$watch("ngModel", function (value) {
+                    // Sanitize the input to make sure no junk sneaks in
+                    // and gets the gauge stuck on NaN
+                    value = Number(value);
+                    if (isNaN(value)) {
+                        return;
+                    }
+
                     // The gauge isn't updated immediately.
                     // We use a timer to update the gauge dynamically
                     if (currentValue == null) {
