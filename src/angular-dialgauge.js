@@ -140,7 +140,7 @@ angular.module('angular-dialgauge', [
 
                 // Add a watch on all configuration variables.
                 // If anything changes, update the static path
-                $scope.$watch([
+                $scope.$watchGroup([
                     'rotate',
                     'angle',
                     'scaleMin',
