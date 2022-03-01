@@ -7,6 +7,9 @@
   ],
   "description": "Animated dial gauge for AngularJS",
   "main": "src/angular-dialgauge.js",
+  "dependencies": {
+    "angular": "^1.3.0"
+  },
   "keywords": [
     "AngularJS",
     "Javascript",
